@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import AppError from '../../errors/appError';
 import { Category } from '../Category/catagory.model';
 import { TCourse } from './course.interface';
@@ -35,7 +36,40 @@ const getAllCoursesFromDB = async () => {
   return result;
 };
 
+const getAllReviewsWithSingleCourseFromDB = async (id: string) => {
+  const result = await Course.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(id) },
+    },
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: '_id',
+        foreignField: 'courseId',
+        as: 'reviews',
+      },
+    },
+  ]);
+  return result;
+};
+
+const getTheBestCourseFromDB = async () => {
+  const result = await Course.aggregate([
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: '_id',
+        foreignField: 'courseId',
+        as: 'reviews',
+      },
+    },
+  ]);
+  return result;
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
+  getAllReviewsWithSingleCourseFromDB,
+  getTheBestCourseFromDB,
 };
