@@ -1,6 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
-import { CategoryControllers } from './app/modules/Category/category.controller';
+import { CategoryRoutes } from './app/modules/Category/category.route';
 
 const app: Application = express();
 
@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 // routes
-app.use('/api/categories', CategoryControllers.createCategory);
+app.use('/api/categories', CategoryRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello assingment 3!');

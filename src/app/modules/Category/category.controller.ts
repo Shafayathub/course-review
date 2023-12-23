@@ -11,6 +11,17 @@ const createCategory: RequestHandler = async (req, res) => {
   });
 };
 
+const getAllCategories: RequestHandler = async (req, res) => {
+  const result = await CategoryServices.getAllCategoriesFromDB();
+
+  res.status(200).json({
+    success: true,
+    message: 'Categories retrieved successfully',
+    data: result,
+  });
+};
+
 export const CategoryControllers = {
   createCategory,
+  getAllCategories,
 };
