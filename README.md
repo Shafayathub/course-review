@@ -24,11 +24,12 @@ This is a Node.js project with TypeScript, Express, and MongoDB. It provides a s
 
    ```bash
    git clone <repository-url>
-   Install dependencies:
+
    ```
 
-npm install
-Set up environment variables:
+   Install dependencies:
+   npm install
+   Set up environment variables:
 
 Create a .env file in the project root and add your configuration. Refer to the .env.example file for guidance.
 
