@@ -37,6 +37,7 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
 
   const allCourses = Course.find();
 
+  // paginating
   const limit = Number(payload?.limit || 10);
   let skip: number = 0;
 
@@ -47,12 +48,28 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
   }
   const paginateQuery = allCourses.skip(skip);
 
-  const limitQuery = await paginateQuery.limit(limit);
+  const limitQuery = paginateQuery.limit(limit);
 
+  // sorting
+  let sortBy = 'createdAt';
+  let sortOrder = 'desc';
+
+  if (payload?.sortBy) {
+    sortBy = payload.sortBy as string;
+  }
+
+  if (payload?.sortOrder) {
+    sortOrder = payload?.sortOrder === 'asc' ? sortBy : `-${sortBy}`;
+  }
+  console.log(sortOrder);
+
+  const sortQuery = await limitQuery.sort(sortOrder);
+
+  // filtering
   // const queryObj = { ...payload };
   // const excluseFields = ['page', 'limit', 'sortBy', 'sortOrder'];
 
-  return limitQuery;
+  return sortQuery;
 };
 
 const getAllReviewsWithSingleCourseFromDB = async (id: string) => {
