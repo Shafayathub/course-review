@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import mongoose from 'mongoose';
 import AppError from '../../errors/appError';
 import { Category } from '../Category/catagory.model';
-import { TCourse } from './course.interface';
+import { TCourse, TDetails } from './course.interface';
 import { Course } from './cousre.model';
 import { Review } from '../Review/review.model';
 
@@ -174,7 +176,55 @@ const updateSingleCourseIntoDB = async (
       runValidators: true,
     },
   );
-  return updatePrimitiveDataToCourse;
+
+  if (details) {
+    const level = details.level;
+    const description = details.description;
+    if (level && description) {
+      const updateDetails = await Course.findByIdAndUpdate(id, {
+        $set: { details: { ...details } },
+      });
+    } else if (level) {
+      const updateDetails = await Course.findByIdAndUpdate(id, {
+        $set: { 'details.level': level },
+      });
+    } else if (description) {
+      const updateDetails = await Course.findByIdAndUpdate(id, {
+        $set: { 'details.description': description },
+      });
+    }
+  }
+
+  if (tags && tags.length > 0) {
+    const deletedTags = tags
+      ?.filter((tag) => tag.name && tag.isDeleted)
+      .map((e) => e.name);
+
+    const deletedTagsFromCourse = await Course.findByIdAndUpdate(
+      id,
+      {
+        $pull: { tags: { name: { $in: deletedTags } } },
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    const newTags = tags?.filter((tag) => tag.name && !tag.isDeleted);
+
+    const addedTagsIntoCourse = await Course.findByIdAndUpdate(
+      id,
+      {
+        $addToSet: { tags: { $each: newTags } },
+      },
+      { new: true, runValidators: true },
+    );
+  }
+
+  const result = await Course.findById(id);
+
+  return result;
 };
 
 export const CourseServices = {

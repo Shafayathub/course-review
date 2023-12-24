@@ -4,18 +4,10 @@ const createTagsValidationSchema = z.object({
   name: z.string(),
   isDeleted: z.boolean(),
 });
-const updateTagsValidationSchema = z.object({
-  name: z.string(),
-  isDeleted: z.boolean().optional(),
-});
 
 const createDetailsValidationSchema = z.object({
   level: z.string(),
   description: z.string(),
-});
-const updateDetailsValidationSchema = z.object({
-  level: z.string().optional(),
-  description: z.string().optional(),
 });
 
 const createCourseValidationSchema = z.object({
@@ -31,6 +23,17 @@ const createCourseValidationSchema = z.object({
   durationInWeeks: z.number().int().optional(),
   details: createDetailsValidationSchema,
 });
+
+const updateTagsValidationSchema = z.object({
+  name: z.string(),
+  isDeleted: z.boolean().optional(),
+});
+
+const updateDetailsValidationSchema = z.object({
+  level: z.string().optional(),
+  description: z.string().optional(),
+});
+
 const updateCourseValidationSchema = z.object({
   title: z.string().optional(),
   instructor: z.string().optional(),

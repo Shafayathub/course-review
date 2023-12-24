@@ -13,8 +13,8 @@ const tagsSchema = new Schema<TTags>(
 
 const detailsSchema = new Schema<TDetails>(
   {
-    level: { type: String, required: true },
-    description: { type: String, required: true },
+    level: { type: String },
+    description: { type: String },
   },
   {
     _id: false,
