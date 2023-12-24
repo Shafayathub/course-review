@@ -94,18 +94,15 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
 
   if (queryObj?.tags) {
     const tag = queryObj.tags;
-    const tagQuery = await maxPriceQuery.find(
-      {},
-      {
-        tags: { name: { $elemMatch: { tag } } },
-      },
-    );
+    const tagQuery = await maxPriceQuery.find({
+      tags: { $elemMatch: { name: tag } },
+    });
     return tagQuery;
   }
 
-  // const result = await maxPriceQuery.find(queryObj);
+  const result = await maxPriceQuery.find(queryObj);
 
-  // return result;
+  return result;
 };
 
 const getAllReviewsWithSingleCourseFromDB = async (id: string) => {
