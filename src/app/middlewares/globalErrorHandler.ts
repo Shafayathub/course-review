@@ -4,6 +4,7 @@ import config from '../config';
 import { ZodError } from 'zod';
 import handleZodError from '../errors/handleZodError';
 import AppError from '../errors/appError';
+import handleCastError from '../errors/handleCastError';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
@@ -24,6 +25,10 @@ const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
     statusCode = httpStatus.BAD_REQUEST;
     message = err.message;
     errorMessage = err.errorMessage;
+  } else if (err?.name === 'CastError') {
+    const simplifiedError = handleCastError(err);
+    statusCode = httpStatus.BAD_REQUEST;
+    message = simplifiedError.message;
   }
 
   res.status(statusCode).json({

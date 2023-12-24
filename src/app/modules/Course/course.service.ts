@@ -33,7 +33,7 @@ const createCourseIntoDB = async (payload: TCourse) => {
 };
 
 const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
-  console.log(payload);
+  // console.log(payload);
 
   const allCourses = Course.find();
 
@@ -61,15 +61,51 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
   if (payload?.sortOrder) {
     sortOrder = payload?.sortOrder === 'asc' ? sortBy : `-${sortBy}`;
   }
-  console.log(sortOrder);
 
-  const sortQuery = await limitQuery.sort(sortOrder);
+  const sortQuery = limitQuery.sort(sortOrder);
 
   // filtering
-  // const queryObj = { ...payload };
-  // const excluseFields = ['page', 'limit', 'sortBy', 'sortOrder'];
+  const queryObj = { ...payload };
+  const excluseFields = ['page', 'limit', 'sortBy', 'sortOrder'];
+  excluseFields.forEach((e) => delete queryObj[e]);
+  //
+  // console.log(queryObj);
+  //
+  let minPrice = 0;
+  let maxPrice = 100000000;
+  if (queryObj?.minPrice) {
+    minPrice = Number(queryObj.minPrice);
+  }
 
-  return sortQuery;
+  const minPriceQuery = sortQuery.find({ price: { $gt: minPrice } });
+
+  if (queryObj?.maxPrice) {
+    maxPrice = Number(queryObj?.maxPrice);
+  }
+
+  const maxPriceQuery = minPriceQuery.find({ price: { $lt: maxPrice } });
+
+  // let tags = {};
+  // if (queryObj?.tags) {
+  //   tags = {
+  //     name: queryObj?.tags,
+  //   };
+  // }
+
+  if (queryObj?.tags) {
+    const tag = queryObj.tags;
+    const tagQuery = await maxPriceQuery.find(
+      {},
+      {
+        tags: { name: { $elemMatch: { tag } } },
+      },
+    );
+    return tagQuery;
+  }
+
+  // const result = await maxPriceQuery.find(queryObj);
+
+  // return result;
 };
 
 const getAllReviewsWithSingleCourseFromDB = async (id: string) => {
