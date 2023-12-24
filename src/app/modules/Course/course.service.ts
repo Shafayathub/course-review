@@ -32,9 +32,27 @@ const createCourseIntoDB = async (payload: TCourse) => {
   }
 };
 
-const getAllCoursesFromDB = async () => {
-  const result = await Course.find();
-  return result;
+const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
+  console.log(payload);
+
+  const allCourses = Course.find();
+
+  const limit = Number(payload?.limit || 10);
+  let skip: number = 0;
+
+  if (payload?.page) {
+    const page: number = Number(payload?.page || 1);
+
+    skip = Number((page - 1) * limit);
+  }
+  const paginateQuery = allCourses.skip(skip);
+
+  const limitQuery = await paginateQuery.limit(limit);
+
+  // const queryObj = { ...payload };
+  // const excluseFields = ['page', 'limit', 'sortBy', 'sortOrder'];
+
+  return limitQuery;
 };
 
 const getAllReviewsWithSingleCourseFromDB = async (id: string) => {

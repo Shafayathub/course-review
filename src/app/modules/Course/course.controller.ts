@@ -17,10 +17,19 @@ const createCourse: RequestHandler = async (req, res, next) => {
 
 const getAllCourses: RequestHandler = async (req, res, next) => {
   try {
-    const result = await CourseServices.getAllCoursesFromDB();
+    const page: number = Number(req?.query?.page || 1);
+    const limit: number = Number(req?.query?.limit || 10);
+    const skip: number = Number((page - 1) * limit);
+    const total: number = page * limit - skip;
+    const result = await CourseServices.getAllCoursesFromDB(req.query);
     res.status(201).json({
       success: true,
       message: 'Course created successfully',
+      meta: {
+        page,
+        limit,
+        total,
+      },
       data: result,
     });
   } catch (err) {
