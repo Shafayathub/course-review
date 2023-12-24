@@ -3,6 +3,7 @@ import AppError from '../../errors/appError';
 import { Category } from '../Category/catagory.model';
 import { TCourse } from './course.interface';
 import { Course } from './cousre.model';
+import { Review } from '../Review/review.model';
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const { startDate } = payload;
@@ -54,17 +55,41 @@ const getAllReviewsWithSingleCourseFromDB = async (id: string) => {
 };
 
 const getTheBestCourseFromDB = async () => {
-  const result = await Course.aggregate([
+  const result = await Review.aggregate([
     {
-      $lookup: {
-        from: 'reviews',
-        localField: '_id',
-        foreignField: 'courseId',
-        as: 'reviews',
+      $group: {
+        _id: '$courseId',
+        reviewCount: { $sum: 1 },
+        averageRating: { $avg: '$rating' },
       },
     },
+    {
+      $sort: { Average: -1 },
+    },
+    {
+      $limit: 1,
+    },
+    {
+      $lookup: {
+        from: 'courses',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'course',
+      },
+    },
+    {
+      $project: { reviewCount: 1, averageRating: 1, course: 1, _id: 0 },
+    },
   ]);
-  return result;
+  const formatedResult = result[0];
+  const { reviewCount, averageRating, course } = formatedResult;
+  // console.log(reviewCount, averageRating, course[0]);
+
+  return {
+    reviewCount,
+    averageRating: parseFloat(averageRating),
+    course: course[0],
+  };
 };
 
 export const CourseServices = {
