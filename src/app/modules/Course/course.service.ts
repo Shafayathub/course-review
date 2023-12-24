@@ -68,7 +68,14 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
 
   // filtering
   const queryObj = { ...payload };
-  const excluseFields = ['page', 'limit', 'sortBy', 'sortOrder'];
+  const excluseFields = [
+    'page',
+    'limit',
+    'sortBy',
+    'sortOrder',
+    'minPrice',
+    'maxPrice',
+  ];
   excluseFields.forEach((e) => delete queryObj[e]);
   //
   // console.log(queryObj);
