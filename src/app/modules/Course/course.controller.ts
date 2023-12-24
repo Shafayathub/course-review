@@ -71,9 +71,28 @@ const getTheBestCourse: RequestHandler = async (req, res, next) => {
   }
 };
 
+const updateSingleCourse: RequestHandler = async (req, res, next) => {
+  const { courseId } = req.params;
+  try {
+    const result = await CourseServices.updateSingleCourseIntoDB(
+      courseId,
+      req.body,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Course updated successfully',
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const CourseControllers = {
   createCourse,
   getAllCourses,
   getAllReviewsWithSingleCourse,
   getTheBestCourse,
+  updateSingleCourse,
 };

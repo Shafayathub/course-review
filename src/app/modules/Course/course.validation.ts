@@ -4,10 +4,18 @@ const createTagsValidationSchema = z.object({
   name: z.string(),
   isDeleted: z.boolean(),
 });
+const updateTagsValidationSchema = z.object({
+  name: z.string(),
+  isDeleted: z.boolean().optional(),
+});
 
 const createDetailsValidationSchema = z.object({
   level: z.string(),
   description: z.string(),
+});
+const updateDetailsValidationSchema = z.object({
+  level: z.string().optional(),
+  description: z.string().optional(),
 });
 
 const createCourseValidationSchema = z.object({
@@ -23,7 +31,21 @@ const createCourseValidationSchema = z.object({
   durationInWeeks: z.number().int().optional(),
   details: createDetailsValidationSchema,
 });
+const updateCourseValidationSchema = z.object({
+  title: z.string().optional(),
+  instructor: z.string().optional(),
+  categoryId: z.string().optional(),
+  price: z.number().optional(),
+  tags: z.array(updateTagsValidationSchema).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  language: z.string().optional(),
+  provider: z.string().optional(),
+  durationInWeeks: z.number().int().optional().optional(),
+  details: updateDetailsValidationSchema.optional(),
+});
 
 export const CourseValidations = {
   createCourseValidationSchema,
+  updateCourseValidationSchema,
 };

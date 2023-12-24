@@ -5,7 +5,7 @@ import httpStatus from 'http-status';
 const handleCastError = (err: mongoose.Error.CastError): TErrorResponse => {
   const errorSources = [err];
   const errorMessage = errorSources.map((e) => {
-    return `${e.stringValue} is not valid ID.`;
+    return `${e.value} is not a valid ID!.`;
   });
 
   const statusCode = httpStatus.BAD_REQUEST;

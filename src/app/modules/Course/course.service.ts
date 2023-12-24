@@ -160,9 +160,27 @@ const getTheBestCourseFromDB = async () => {
   };
 };
 
+const updateSingleCourseIntoDB = async (
+  id: string,
+  payload: Partial<TCourse>,
+) => {
+  const { tags, details, ...remainingData } = payload;
+
+  const updatePrimitiveDataToCourse = await Course.findByIdAndUpdate(
+    id,
+    remainingData,
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+  return updatePrimitiveDataToCourse;
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
   getAllReviewsWithSingleCourseFromDB,
   getTheBestCourseFromDB,
+  updateSingleCourseIntoDB,
 };

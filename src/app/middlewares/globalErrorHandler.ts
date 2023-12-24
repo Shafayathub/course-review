@@ -9,8 +9,8 @@ import handleCastError from '../errors/handleCastError';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
   let statusCode: number = 500;
-  let message: string = err?.message || 'Something went worng';
-  let errorMessage: string = err?.message || 'Somthing went worng';
+  let message: string = 'Something went worng';
+  let errorMessage: string = 'Somthing went worng';
 
   if (err?.code === 11000) {
     statusCode = httpStatus.BAD_REQUEST;
@@ -21,14 +21,15 @@ const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
     statusCode = httpStatus.BAD_REQUEST;
     message = simplifiedError.message;
     errorMessage = simplifiedError.errorMessage;
-  } else if (err instanceof AppError) {
-    statusCode = httpStatus.BAD_REQUEST;
-    message = err.message;
-    errorMessage = err.errorMessage;
   } else if (err?.name === 'CastError') {
     const simplifiedError = handleCastError(err);
     statusCode = httpStatus.BAD_REQUEST;
     message = simplifiedError.message;
+    errorMessage = simplifiedError.errorMessage;
+  } else if (err instanceof AppError) {
+    statusCode = httpStatus.BAD_REQUEST;
+    message = err.message;
+    errorMessage = err.errorMessage;
   }
 
   res.status(statusCode).json({
