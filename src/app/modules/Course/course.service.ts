@@ -68,15 +68,7 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
 
   // filtering
   const queryObj = { ...payload };
-  const excluseFields = [
-    'page',
-    'limit',
-    'sortBy',
-    'sortOrder',
-    'minPrice',
-    'maxPrice',
-  ];
-  excluseFields.forEach((e) => delete queryObj[e]);
+
   //
   // console.log(queryObj);
   //
@@ -86,13 +78,13 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
     minPrice = Number(queryObj.minPrice);
   }
 
-  const minPriceQuery = sortQuery.find({ price: { $gt: minPrice } });
+  const minPriceQuery = sortQuery.find({ price: { $gte: minPrice } });
 
   if (queryObj?.maxPrice) {
     maxPrice = Number(queryObj?.maxPrice);
   }
 
-  const maxPriceQuery = minPriceQuery.find({ price: { $lt: maxPrice } });
+  const maxPriceQuery = minPriceQuery.find({ price: { $lte: maxPrice } });
 
   // let tags = {};
   // if (queryObj?.tags) {
@@ -108,6 +100,16 @@ const getAllCoursesFromDB = async (payload: Record<string, unknown>) => {
     });
     return tagQuery;
   }
+  const excluseFields = [
+    'page',
+    'limit',
+    'sortBy',
+    'sortOrder',
+    'minPrice',
+    'maxPrice',
+    'tags',
+  ];
+  excluseFields.forEach((e) => delete queryObj[e]);
 
   const result = await maxPriceQuery.find(queryObj);
 
