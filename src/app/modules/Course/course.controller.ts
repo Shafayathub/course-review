@@ -24,7 +24,7 @@ const getAllCourses: RequestHandler = async (req, res, next) => {
     const result = await CourseServices.getAllCoursesFromDB(req.query);
     res.status(201).json({
       success: true,
-      message: 'Course created successfully',
+      message: 'Courses retrieved successfully',
       meta: {
         page,
         limit,
